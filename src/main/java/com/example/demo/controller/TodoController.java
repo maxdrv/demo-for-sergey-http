@@ -10,13 +10,14 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
 public class TodoController {
+    private final String filePath = "C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json";
 
     private final InMemoryTodoRepository todoRepository;
-
     public TodoController(InMemoryTodoRepository todoRepository) {
         this.todoRepository = todoRepository;
     }
@@ -33,7 +34,6 @@ public class TodoController {
     @GetMapping("/v3/tasks")
     public ResponseEntity<String> findAllV1() {
         ObjectMapper mapper = new ObjectMapper();
-
         List<Todo> todos = todoRepository.findAll();
 
         String jsonBody;
@@ -49,6 +49,7 @@ public class TodoController {
 
         return new ResponseEntity<>(jsonBody, headers, HttpStatus.OK);
     }
+
 
     @GetMapping("/v2/tasks")
     public ResponseEntity<List<Todo>> findAllV2() {
@@ -82,7 +83,7 @@ public class TodoController {
     }
 
     @PostMapping(value = "/v1/tasks")
-    public ResponseEntity<Todo> save(@RequestBody TodoCreateRequest request) {
+    public ResponseEntity<Todo> save(@RequestBody TodoCreateRequest request) throws IOException {
         Todo saved = todoRepository.save(request);
         return ResponseEntity.ok(saved);
     }
