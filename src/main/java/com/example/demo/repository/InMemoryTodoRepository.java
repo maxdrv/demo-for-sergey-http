@@ -37,10 +37,11 @@ public class InMemoryTodoRepository {
     }
     public List<Todo> findAllByFilter(@Nullable String title) {
         if (title == null) {
-            return this.list;
+            return  readJson();
         }
+        List<Todo> ischodnick = readJson();
         List<Todo> result = new ArrayList<>();
-        for (Todo todo : this.list) {
+        for (Todo todo : ischodnick) {
             String todoLowercase = todo.getTitle().toLowerCase();
             String filterLowercase = title.toLowerCase();
             if (todoLowercase.contains(filterLowercase)) {
