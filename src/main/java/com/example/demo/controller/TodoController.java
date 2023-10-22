@@ -10,6 +10,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -22,6 +23,7 @@ public class TodoController {
     }
 
     @GetMapping("/ping")
+
     public ResponseEntity<String> ok() {
         HttpStatus code = HttpStatus.OK;
         String body = "BODY";
@@ -82,7 +84,7 @@ public class TodoController {
     }
 
     @PostMapping(value = "/v1/tasks")
-    public ResponseEntity<Todo> save(@RequestBody TodoCreateRequest request) {
+    public ResponseEntity<Todo> save(@RequestBody TodoCreateRequest request) throws IOException {
         Todo saved = todoRepository.save(request);
         return ResponseEntity.ok(saved);
     }
