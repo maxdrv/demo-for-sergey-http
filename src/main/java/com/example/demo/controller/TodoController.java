@@ -23,6 +23,7 @@ public class TodoController {
     }
 
     @GetMapping("/ping")
+
     public ResponseEntity<String> ok() {
         HttpStatus code = HttpStatus.OK;
         String body = "BODY";
