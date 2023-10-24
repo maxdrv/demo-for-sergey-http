@@ -35,6 +35,49 @@ public class InMemoryTodoRepository {
     public List<Todo> findAll() {
         return readJson();
     }
+    public List<Todo> filterCompleted(@Nullable boolean completed) {
+        List<Todo> ischodnick = readJson();
+        List<Todo> result = new ArrayList<>();
+        if (completed == true) {
+            for (Todo todo : ischodnick) {
+                if (todo.isCompleted()) {
+                    result.add(todo);
+                }
+            }
+            return result;
+
+        }
+        else {
+            for (Todo todo : ischodnick) {
+                if (!todo.isCompleted()) {
+                    result.add(todo);
+                }
+            }
+            return result;
+        }
+
+    }
+    public List<Todo> filterAll(@Nullable String title, @Nullable boolean completed) {
+        List<Todo> ischodnick = readJson();
+        List<Todo> result = new ArrayList<>();
+        if (completed == true) {
+            for (Todo todo : ischodnick) {
+                if (!todo.isCompleted()) {
+                    String todoLowercase = todo.getTitle().toLowerCase();
+                    String filterLowercase = title.toLowerCase();
+                    if (todoLowercase.contains(filterLowercase)) {
+                        result.add(todo);
+                    }
+                }
+            }
+
+        }return result;
+    }
+
+
+
+
+
     public List<Todo> findAllByFilter(@Nullable String title) {
         if (title == null) {
             return  readJson();
@@ -44,6 +87,21 @@ public class InMemoryTodoRepository {
         for (Todo todo : ischodnick) {
             String todoLowercase = todo.getTitle().toLowerCase();
             String filterLowercase = title.toLowerCase();
+            if (todoLowercase.contains(filterLowercase)) {
+                result.add(todo);
+            }
+        }
+        return result;
+    }
+    public List<Todo> filter_true(@Nullable String completed) {
+        if (completed == null) {
+            return  readJson();
+        }
+        List<Todo> ischodnick = readJson();
+        List<Todo> result = new ArrayList<>();
+        for (Todo todo : ischodnick) {
+            String todoLowercase = todo.getTitle().toLowerCase();
+            String filterLowercase = completed.toLowerCase();
             if (todoLowercase.contains(filterLowercase)) {
                 result.add(todo);
             }

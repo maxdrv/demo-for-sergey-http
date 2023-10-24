@@ -21,6 +21,42 @@ public class TodoController {
     public TodoController(InMemoryTodoRepository todoRepository) {
         this.todoRepository = todoRepository;
     }
+    //@GetMapping(value = "/v1/tasks")
+    //public ResponseEntity<List<Todo>> findAllV3(
+      //      @Nullable
+        //    @RequestParam(value = "completed", required = false)
+            //Boolean completed
+    //) {
+      //  List<Todo> todos;
+        //    todos = todoRepository.filterCompleted(Boolean.TRUE.equals(completed));
+
+        //return ResponseEntity.ok(todos);
+    //}
+        @GetMapping(value = "/v1/tasks")
+        public ResponseEntity<List<Todo>> findAllV3(
+                @Nullable
+                @RequestParam(value = "title", required = false)
+                String title,
+                @Nullable
+                @RequestParam(value = "completed", required = false)
+                Boolean completed
+        ) {
+            List<Todo> todos;
+            if (title != null && completed != null) {
+                todos = todoRepository.filterAll(title, completed);
+
+
+            }
+             else if (title != null) {
+                todos = todoRepository.findAllByFilter(title);
+            } else if (completed != null) {
+                todos = todoRepository.filterCompleted(completed);
+            } else {
+                todos = todoRepository.findAll();
+            }
+
+            return ResponseEntity.ok(todos);
+        }
 
     @GetMapping("/ping")
 
@@ -58,15 +94,15 @@ public class TodoController {
         return new ResponseEntity<>(todos, null, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/v1/tasks")
-    public ResponseEntity<List<Todo>> findAllV3(
-            @Nullable
-            @RequestParam(value = "title", required = false)
-            String title
-    ) {
-        List<Todo> todos = todoRepository.findAllByFilter(title);
-        return ResponseEntity.ok(todos);
-    }
+    //@GetMapping(value = "/v1/tasks")
+  //public ResponseEntity<List<Todo>> findAllV345646(
+    //        @Nullable
+      //      @RequestParam(value = "title", required = false)
+        //    String title
+    //) {
+      //  List<Todo> todos = todoRepository.findAllByFilter(title);
+        //return ResponseEntity.ok(todos);
+    //}
 
     @GetMapping(value = "/v1/tasks/{id}")
     public ResponseEntity<Todo> findById(@PathVariable("id") long id) {
