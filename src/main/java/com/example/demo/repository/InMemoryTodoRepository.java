@@ -35,79 +35,6 @@ public class InMemoryTodoRepository {
     public List<Todo> findAll() {
         return readJson();
     }
-    public List<Todo> filterCompleted(@Nullable boolean completed) {
-        List<Todo> ischodnick = readJson();
-        List<Todo> result = new ArrayList<>();
-        if (completed == true) {
-            for (Todo todo : ischodnick) {
-                if (todo.isCompleted()) {
-                    result.add(todo);
-                }
-            }
-            return result;
-
-        }
-        else {
-            for (Todo todo : ischodnick) {
-                if (!todo.isCompleted()) {
-                    result.add(todo);
-                }
-            }
-            return result;
-        }
-
-    }
-    public List<Todo> filterAll(@Nullable String title, @Nullable boolean completed) {
-        List<Todo> ischodnick = readJson();
-        List<Todo> result = new ArrayList<>();
-        if (completed == true) {
-            for (Todo todo : ischodnick) {
-                if (!todo.isCompleted()) {
-                    String todoLowercase = todo.getTitle().toLowerCase();
-                    String filterLowercase = title.toLowerCase();
-                    if (todoLowercase.contains(filterLowercase)) {
-                        result.add(todo);
-                    }
-                }
-            }
-
-        }return result;
-    }
-
-
-
-
-
-    public List<Todo> findAllByFilter(@Nullable String title) {
-        if (title == null) {
-            return  readJson();
-        }
-        List<Todo> ischodnick = readJson();
-        List<Todo> result = new ArrayList<>();
-        for (Todo todo : ischodnick) {
-            String todoLowercase = todo.getTitle().toLowerCase();
-            String filterLowercase = title.toLowerCase();
-            if (todoLowercase.contains(filterLowercase)) {
-                result.add(todo);
-            }
-        }
-        return result;
-    }
-    public List<Todo> filter_true(@Nullable String completed) {
-        if (completed == null) {
-            return  readJson();
-        }
-        List<Todo> ischodnick = readJson();
-        List<Todo> result = new ArrayList<>();
-        for (Todo todo : ischodnick) {
-            String todoLowercase = todo.getTitle().toLowerCase();
-            String filterLowercase = completed.toLowerCase();
-            if (todoLowercase.contains(filterLowercase)) {
-                result.add(todo);
-            }
-        }
-        return result;
-    }
 
     public Todo findByIdOrThrow(long id) {
         readJson();
@@ -139,20 +66,18 @@ public class InMemoryTodoRepository {
         ObjectMapper mapper = new ObjectMapper();
         String filePath = "C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json";
         try {
+            List<Todo> todos = new ArrayList<>();
             File file = new File(filePath);
-            if(file.exists()){
-                String result =Files.readString(file.toPath());
-                if(result.isBlank()){
-                    List <Todo> todos = new ArrayList<>();
-                    return  todos;
+            if (file.exists()) {
+                String result = Files.readString(file.toPath());
+                if (result.isBlank()) {
+                    return todos;
                 }
-                return mapper.readValue(new File(filePath), new TypeReference<List<Todo>>() {});
+                return mapper.readValue(new File(filePath), new TypeReference<List<Todo>>() {
+                });
 
-            }
-
-            else {
-                List <Todo> todos = new ArrayList<>();
-                return  todos;
+            } else {
+                return todos;
             }
 
 
@@ -161,6 +86,7 @@ public class InMemoryTodoRepository {
             throw new RuntimeException(e);
         }
     }
+
     public Todo save(TodoCreateRequest request) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         List<Todo> todos = readJson();
@@ -168,11 +94,8 @@ public class InMemoryTodoRepository {
         todo.setUserId(1L);
         todo.setId(nextTodoId());
         todo.setTitle(request.getTitle());
-        int count_Id=todos.size();
+        int count_Id = todos.size();
         todo.setCompleted(false);
-
-        //File file2 = new File("C:\\Users\\User\\Desktop\\demo-for-sergey-http-master2\\idSave.txt");
-        //FileWriter writer2 = new FileWriter("C:\\Users\\User\\Desktop\\demo-for-sergey-http-master2\\idSave.txt");
 
         todos.add(todo);
 
@@ -205,7 +128,7 @@ public class InMemoryTodoRepository {
 
     private long nextTodoId() {
         List<Todo> todos = readJson();
-        return todos.size()+1;
+        return todos.size() + 1;
     }
 
     private long nextSubtaskId() {
@@ -213,6 +136,34 @@ public class InMemoryTodoRepository {
         return subtaskSeq++;
     }
 
+    public List<Todo> filterTodos(@Nullable Boolean completed, @Nullable String title) {
+        List<Todo> ischodnick = readJson();
+        List<Todo> result = new ArrayList<>();
+        for (Todo todo : ischodnick) {
+            if (title != null && completed != null) {
+                String todoLowerCase = todo.getTitle().toLowerCase();
+                String filterLowerCase = title.toLowerCase();
+                if (todoLowerCase.contains(filterLowerCase) && todo.isCompleted() == completed) {
+                    result.add(todo);
+                }
+            } else if (title != null) {
+                String todoLowercase = todo.getTitle().toLowerCase();
+                String filterLowercase = title.toLowerCase();
+                if (todoLowercase.contains(filterLowercase)) {
+                    result.add(todo);
+                }
+            } else if (completed != null) {
+                if (todo.isCompleted() == completed) {
+                    result.add(todo);
+                }
+            } else {
+                result.add(todo);
+            }
 
-
+        }
+        return result;
+    }
 }
+
+
+
