@@ -11,15 +11,29 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 public class TodoController {
+    private final String filePath = "C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json";
 
     private final InMemoryTodoRepository todoRepository;
-
     public TodoController(InMemoryTodoRepository todoRepository) {
         this.todoRepository = todoRepository;
+    }//
+    @GetMapping(value = "/v1/tasks")
+    public ResponseEntity<List<Todo>> findAllV1(
+            @Nullable
+            @RequestParam(value = "title", required = false)
+            String title,
+            @Nullable
+            @RequestParam(value = "completed", required = false)
+            Boolean completed
+    ) {
+        List<Todo> todos;
+        todos = todoRepository.filterTodos(completed, title);
+        return  ResponseEntity.ok(todos);
     }
 
     @GetMapping("/ping")
@@ -35,7 +49,6 @@ public class TodoController {
     @GetMapping("/v3/tasks")
     public ResponseEntity<String> findAllV1() {
         ObjectMapper mapper = new ObjectMapper();
-
         List<Todo> todos = todoRepository.findAll();
 
         String jsonBody;
@@ -52,20 +65,11 @@ public class TodoController {
         return new ResponseEntity<>(jsonBody, headers, HttpStatus.OK);
     }
 
+
     @GetMapping("/v2/tasks")
     public ResponseEntity<List<Todo>> findAllV2() {
         List<Todo> todos = todoRepository.findAll();
         return new ResponseEntity<>(todos, null, HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/v1/tasks")
-    public ResponseEntity<List<Todo>> findAllV3(
-            @Nullable
-            @RequestParam(value = "title", required = false)
-            String title
-    ) {
-        List<Todo> todos = todoRepository.findAllByFilter(title);
-        return ResponseEntity.ok(todos);
     }
 
     @GetMapping(value = "/v1/tasks/{id}")

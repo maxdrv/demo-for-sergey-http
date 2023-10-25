@@ -3,7 +3,7 @@
     "userId": 1,
     "id": 1,
     "title": "532421",
-    "completed": false,
+    "completed": true,
     "subtasks": null
   },
   {
@@ -24,7 +24,7 @@
     "userId": 1,
     "id": 4,
     "title": "333333331",
-    "completed": false,
+    "completed":true,
     "subtasks": null
   },
   {
