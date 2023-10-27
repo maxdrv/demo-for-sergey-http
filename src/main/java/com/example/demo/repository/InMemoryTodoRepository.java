@@ -136,6 +136,28 @@ public class InMemoryTodoRepository {
         return subtaskSeq++;
     }
 
+    public List<Todo> deleteTodo(Long id) throws IOException {
+        List<Todo> todosAll = readJson();
+        List<Todo> result = new ArrayList<>();
+        for (int i = 0; i < todosAll.size(); i++) {
+            if (todosAll.get(i).getId() != id) {
+                result.add(todosAll.get(i));
+            }
+        }
+
+        ObjectMapper mapper2 = new ObjectMapper();
+        try {
+            File file = new File("C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json");
+            FileWriter writer = new FileWriter(file);
+            mapper2.writeValue(writer, result);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return result;
+
+    }
+
+
     public List<Todo> filterTodos(@Nullable Boolean completed, @Nullable String title) {
         List<Todo> ischodnick = readJson();
         List<Todo> result = new ArrayList<>();
