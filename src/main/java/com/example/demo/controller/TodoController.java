@@ -19,9 +19,12 @@ public class TodoController {
     private final String filePath = "C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json";
 
     private final InMemoryTodoRepository todoRepository;
+
     public TodoController(InMemoryTodoRepository todoRepository) {
         this.todoRepository = todoRepository;
-    }//
+    }
+
+    //
     @GetMapping(value = "/v1/tasks")
     public ResponseEntity<List<Todo>> findAllV1(
             @Nullable
@@ -33,8 +36,15 @@ public class TodoController {
     ) {
         List<Todo> todos;
         todos = todoRepository.filterTodos(completed, title);
-        return  ResponseEntity.ok(todos);
+        return ResponseEntity.ok(todos);
     }
+    @DeleteMapping("/v1/tasks/{id}")
+    public ResponseEntity<List<Todo>> deleteTodo(@PathVariable("id") long id) throws IOException {
+        List<Todo> todos;
+        todos = todoRepository.deleteTodo(id);
+        return ResponseEntity.ok(todos);
+    }
+
 
     @GetMapping("/ping")
 
