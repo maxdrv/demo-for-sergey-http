@@ -14,10 +14,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class InMemoryTodoRepository {
@@ -88,6 +85,7 @@ public class InMemoryTodoRepository {
     }
 
     public Todo save(TodoCreateRequest request) throws IOException {
+
         ObjectMapper mapper = new ObjectMapper();
         List<Todo> todos = readJson();
         Todo todo = new Todo();
@@ -96,7 +94,6 @@ public class InMemoryTodoRepository {
         todo.setTitle(request.getTitle());
         int count_Id = todos.size();
         todo.setCompleted(false);
-
         todos.add(todo);
 
         ObjectMapper mapper2 = new ObjectMapper();
@@ -127,14 +124,36 @@ public class InMemoryTodoRepository {
     }
 
     private long nextTodoId() {
-        List<Todo> todos = readJson();
-        return todos.size() + 1;
+        File file = new File("C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Id.txt");
+        long number = readNumberFromFile(file);
+        number++;
+        writeNumberToFile(file, (int) number);
+        return number;
     }
 
-    private long nextSubtaskId() {
 
-        return subtaskSeq++;
+    private static long readNumberFromFile(File file) {
+        long number = 0;
+
+        try (Scanner scanner = new Scanner(file)) {
+            if (scanner.hasNextInt()) {
+                number = scanner.nextLong();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return number;
     }
+
+    private static void writeNumberToFile(File file, int number) {
+        try (FileWriter writer = new FileWriter(file)) {
+            writer.write(Integer.toString(number));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public List<Todo> deleteTodo(Long id) throws IOException {
         List<Todo> todosAll = readJson();
