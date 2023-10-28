@@ -1,17 +1,11 @@
 package com.example.demo.controller;
 
 import com.example.demo.repository.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -32,8 +26,7 @@ public class TodoController {
             @RequestParam(value = "completed", required = false)
             Boolean completed
     ) {
-        List<Todo> todos;
-        todos = todoRepository.filterTodos(completed, title);
+        List<Todo> todos = todoRepository.filterTodos(completed, title);
         return ResponseEntity.ok(todos);
     }
 
@@ -69,8 +62,7 @@ public class TodoController {
 
     @DeleteMapping("/v1/tasks/{id}")
     public ResponseEntity<List<Todo>> delete(@PathVariable("id") long id) throws IOException {
-        List<Todo> todos;
-        todos = todoRepository.deleteTodo(id);
+        List<Todo> todos = todoRepository.deleteTodo(id);;
         return ResponseEntity.ok(todos);
     }
 
