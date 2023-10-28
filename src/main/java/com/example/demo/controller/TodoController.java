@@ -68,7 +68,7 @@ public class TodoController {
     }
 
     @DeleteMapping("/v1/tasks/{id}")
-    public ResponseEntity<List<Todo>> deleteTodo(@PathVariable("id") long id) throws IOException {
+    public ResponseEntity<List<Todo>> delete(@PathVariable("id") long id) throws IOException {
         List<Todo> todos;
         todos = todoRepository.deleteTodo(id);
         return ResponseEntity.ok(todos);
