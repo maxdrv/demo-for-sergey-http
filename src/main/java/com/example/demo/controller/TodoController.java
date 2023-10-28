@@ -37,22 +37,6 @@ public class TodoController {
         return ResponseEntity.ok(todos);
     }
 
-    @DeleteMapping("/v1/tasks/{id}")
-    public ResponseEntity<List<Todo>> deleteTodo(@PathVariable("id") long id) throws IOException {
-        List<Todo> todos;
-        todos = todoRepository.deleteTodo(id);
-        return ResponseEntity.ok(todos);
-    }
-
-    @GetMapping("/ping")
-    public ResponseEntity<String> ok() {
-        HttpStatus code = HttpStatus.OK;
-        String body = "BODY";
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Custom999", "Max");
-        return new ResponseEntity<>(body, headers, code);
-    }
-
     @GetMapping(value = "/v1/tasks/{id}")
     public ResponseEntity<Todo> findById(@PathVariable("id") long id) {
         Todo founded = todoRepository.findByIdOrThrow(id);
@@ -81,6 +65,22 @@ public class TodoController {
     ) {
         Todo updated = todoRepository.update(id, request);
         return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/v1/tasks/{id}")
+    public ResponseEntity<List<Todo>> deleteTodo(@PathVariable("id") long id) throws IOException {
+        List<Todo> todos;
+        todos = todoRepository.deleteTodo(id);
+        return ResponseEntity.ok(todos);
+    }
+
+    @GetMapping("/ping")
+    public ResponseEntity<String> ok() {
+        HttpStatus code = HttpStatus.OK;
+        String body = "BODY";
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Custom999", "Max");
+        return new ResponseEntity<>(body, headers, code);
     }
 
 }
