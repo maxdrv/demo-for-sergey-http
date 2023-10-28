@@ -14,14 +14,14 @@ import java.util.List;
 import java.util.Scanner;
 
 @Component
-public class InMemoryTodoRepository {
+public class FileTodoRepository {
 
     private long todoSeq = 1L;
     private long subtaskSeq = 1L;
 
     private List<Todo> list;
 
-    public InMemoryTodoRepository() {
+    public FileTodoRepository() {
         this.list = new ArrayList<>();
 
     }

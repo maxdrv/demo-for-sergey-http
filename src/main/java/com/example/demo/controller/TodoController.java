@@ -11,9 +11,9 @@ import java.util.List;
 @RestController
 public class TodoController {
 
-    private final InMemoryTodoRepository todoRepository;
+    private final FileTodoRepository todoRepository;
 
-    public TodoController(InMemoryTodoRepository todoRepository) {
+    public TodoController(FileTodoRepository todoRepository) {
         this.todoRepository = todoRepository;
     }
 
