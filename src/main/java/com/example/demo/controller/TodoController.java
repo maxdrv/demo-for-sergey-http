@@ -74,13 +74,4 @@ public class TodoController {
         return ResponseEntity.ok(todos);
     }
 
-    @GetMapping("/ping")
-    public ResponseEntity<String> ok() {
-        HttpStatus code = HttpStatus.OK;
-        String body = "BODY";
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Custom999", "Max");
-        return new ResponseEntity<>(body, headers, code);
-    }
-
 }
