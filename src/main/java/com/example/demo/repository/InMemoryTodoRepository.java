@@ -1,20 +1,17 @@
 package com.example.demo.repository;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import jakarta.annotation.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 @Component
 public class InMemoryTodoRepository {
@@ -155,7 +152,7 @@ public class InMemoryTodoRepository {
     }
 
 
-    public List<Todo> deleteTodo(Long id) throws IOException {
+    public List<Todo> deleteById(Long id) throws IOException {
         List<Todo> todosAll = readJson();
         List<Todo> result = new ArrayList<>();
         for (int i = 0; i < todosAll.size(); i++) {
