@@ -16,7 +16,6 @@ import java.util.List;
 
 @RestController
 public class TodoController {
-    private final String filePath = "C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json";
 
     private final InMemoryTodoRepository todoRepository;
 
@@ -24,9 +23,8 @@ public class TodoController {
         this.todoRepository = todoRepository;
     }
 
-    //
     @GetMapping(value = "/v1/tasks")
-    public ResponseEntity<List<Todo>> findAllV1(
+    public ResponseEntity<List<Todo>> findAll(
             @Nullable
             @RequestParam(value = "title", required = false)
             String title,
@@ -38,6 +36,7 @@ public class TodoController {
         todos = todoRepository.filterTodos(completed, title);
         return ResponseEntity.ok(todos);
     }
+
     @DeleteMapping("/v1/tasks/{id}")
     public ResponseEntity<List<Todo>> deleteTodo(@PathVariable("id") long id) throws IOException {
         List<Todo> todos;
@@ -45,41 +44,13 @@ public class TodoController {
         return ResponseEntity.ok(todos);
     }
 
-
     @GetMapping("/ping")
-
     public ResponseEntity<String> ok() {
         HttpStatus code = HttpStatus.OK;
         String body = "BODY";
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Custom999", "Max");
         return new ResponseEntity<>(body, headers, code);
-    }
-
-    @GetMapping("/v3/tasks")
-    public ResponseEntity<String> findAllV1() {
-        ObjectMapper mapper = new ObjectMapper();
-        List<Todo> todos = todoRepository.findAll();
-
-        String jsonBody;
-        try {
-            jsonBody = mapper.writeValueAsString(todos);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Content-Type", "application/json");
-
-        return new ResponseEntity<>(jsonBody, headers, HttpStatus.OK);
-    }
-
-
-    @GetMapping("/v2/tasks")
-    public ResponseEntity<List<Todo>> findAllV2() {
-        List<Todo> todos = todoRepository.findAll();
-        return new ResponseEntity<>(todos, null, HttpStatus.OK);
     }
 
     @GetMapping(value = "/v1/tasks/{id}")
