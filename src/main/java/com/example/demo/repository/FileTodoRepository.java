@@ -13,50 +13,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import static com.example.demo.repository.NextTodoId.nextTodoId;
+
 @Component
 public class FileTodoRepository {
 
     private long todoSeq = 1L;
     private long subtaskSeq = 1L;
-
     private List<Todo> list;
 
     public FileTodoRepository() {
         this.list = new ArrayList<>();
-
     }
-
-    public List<Todo> findAll() {
-        return readJson();
-    }
-
-    public Todo findByIdOrThrow(long id) {
-        readJson();
-
-        for (Todo todo : this.readJson()) {
-            if (todo.getId() == id) {
-                return todo;
-            }
-        }
-        throw new RuntimeException("todo not found by id " + id);
-    }
-
-    public SubTask findByTodoIdAndTaskIdOrThrow(long todoId, long subtaskId) {
-        Todo todo = findByIdOrThrow(todoId);
-
-        if (todo.getSubtasks() == null) {
-            throw new RuntimeException("subtask not found by subtask id " + subtaskId);
-        }
-
-        for (SubTask subTask : todo.getSubtasks()) {
-            if (subTask.getId() == subtaskId) {
-                return subTask;
-            }
-        }
-        throw new RuntimeException("subtask not found by subtask id " + subtaskId);
-    }
-
-    public List<Todo> readJson() {
+    public static List<Todo> readJson() {
         ObjectMapper mapper = new ObjectMapper();
         String filePath = "C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json";
         try {
@@ -74,7 +43,6 @@ public class FileTodoRepository {
                 return todos;
             }
 
-
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
@@ -82,17 +50,13 @@ public class FileTodoRepository {
     }
 
     public Todo save(TodoCreateRequest request) throws IOException {
-
-        ObjectMapper mapper = new ObjectMapper();
-        List<Todo> todos = readJson();
         Todo todo = new Todo();
+        List<Todo> todos = readJson();
         todo.setUserId(1L);
         todo.setId(nextTodoId());
         todo.setTitle(request.getTitle());
-        int count_Id = todos.size();
         todo.setCompleted(false);
         todos.add(todo);
-
         ObjectMapper mapper2 = new ObjectMapper();
         try {
             File file = new File("C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json");
@@ -101,10 +65,52 @@ public class FileTodoRepository {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-
-
         return todo;
+    }
 
+    public List<Todo> deleteById(Long id) throws IOException {
+        List<Todo> todosAll = readJson();
+        List<Todo> result = new ArrayList<>();
+        for (Todo todo : todosAll) {
+            if (todo.getId() != id) {
+                result.add(todo);
+            }
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            File file = new File("C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json");
+            FileWriter writer = new FileWriter(file);
+            mapper.writeValue(writer, result);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return result;
+    }
+
+    public Todo findByIdOrThrow(long id) {
+        readJson();
+
+        for (Todo todo : readJson()) {
+            if (todo.getId() == id) {
+                return todo;
+            }
+        }
+        throw new RuntimeException("todo not found by id " + id);
+    }
+    public SubTask findByTodoIdAndTaskIdOrThrow(long todoId, long subtaskId) {
+        Todo todo = findByIdOrThrow(todoId);
+
+        if (todo.getSubtasks() == null) {
+            throw new RuntimeException("subtask not found by subtask id " + subtaskId);
+        }
+
+        for (SubTask subTask : todo.getSubtasks()) {
+            if (subTask.getId() == subtaskId) {
+                return subTask;
+            }
+        }
+        throw new RuntimeException("subtask not found by subtask id " + subtaskId);
     }
 
     public Todo update(long id, TodoUpdateRequest request) {
@@ -116,90 +122,7 @@ public class FileTodoRepository {
         if (request.getTitle() != null) {
             founded.setTitle(request.getTitle());
         }
-
         return founded;
-    }
-
-    private long nextTodoId() {
-        File file = new File("C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Id.txt");
-        long number = readNumberFromFile(file);
-        number++;
-        writeNumberToFile(file, (int) number);
-        return number;
-    }
-
-
-    private static long readNumberFromFile(File file) {
-        long number = 0;
-
-        try (Scanner scanner = new Scanner(file)) {
-            if (scanner.hasNextInt()) {
-                number = scanner.nextLong();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return number;
-    }
-
-    private static void writeNumberToFile(File file, int number) {
-        try (FileWriter writer = new FileWriter(file)) {
-            writer.write(Integer.toString(number));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public List<Todo> deleteById(Long id) throws IOException {
-        List<Todo> todosAll = readJson();
-        List<Todo> result = new ArrayList<>();
-        for (int i = 0; i < todosAll.size(); i++) {
-            if (todosAll.get(i).getId() != id) {
-                result.add(todosAll.get(i));
-            }
-        }
-
-        ObjectMapper mapper2 = new ObjectMapper();
-        try {
-            File file = new File("C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json");
-            FileWriter writer = new FileWriter(file);
-            mapper2.writeValue(writer, result);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return result;
-
-    }
-
-
-    public List<Todo> filterTodos(@Nullable Boolean completed, @Nullable String title) {
-        List<Todo> ischodnick = readJson();
-        List<Todo> result = new ArrayList<>();
-        for (Todo todo : ischodnick) {
-            if (title != null && completed != null) {
-                String todoLowerCase = todo.getTitle().toLowerCase();
-                String filterLowerCase = title.toLowerCase();
-                if (todoLowerCase.contains(filterLowerCase) && todo.isCompleted() == completed) {
-                    result.add(todo);
-                }
-            } else if (title != null) {
-                String todoLowercase = todo.getTitle().toLowerCase();
-                String filterLowercase = title.toLowerCase();
-                if (todoLowercase.contains(filterLowercase)) {
-                    result.add(todo);
-                }
-            } else if (completed != null) {
-                if (todo.isCompleted() == completed) {
-                    result.add(todo);
-                }
-            } else {
-                result.add(todo);
-            }
-
-        }
-        return result;
     }
 }
 
