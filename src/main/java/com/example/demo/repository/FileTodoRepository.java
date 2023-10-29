@@ -36,7 +36,7 @@ public class FileTodoRepository {
                 if (result.isBlank()) {
                     return todos;
                 }
-                return mapper.readValue(new File(filePath), new TypeReference<List<Todo>>() {
+                return mapper.readValue(new File(filePath), new TypeReference<>() {
                 });
 
             } else {
