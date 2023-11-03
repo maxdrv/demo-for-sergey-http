@@ -69,25 +69,6 @@ public class FileTodoRepository {
         return todo;
     }
 
-    public List<Todo> deleteById(Long id) throws IOException {
-        List<Todo> todosAll = readJson();
-        List<Todo> result = new ArrayList<>();
-        for (Todo todo : todosAll) {
-            if (todo.getId() != id) {
-                result.add(todo);
-            }
-        }
-
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            File file = new File("C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json");
-            FileWriter writer = new FileWriter(file);
-            mapper.writeValue(writer, result);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return result;
-    }
 
     public Todo findByIdOrThrow(long id) {
         readJson();
@@ -115,39 +96,61 @@ public class FileTodoRepository {
         throw new RuntimeException("subtask not found by subtask id " + subtaskId);
     }
 
-    public Todo update(long id, TodoUpdateRequest request) {
-        Todo founded = findByIdOrThrow(id);
+    public List<Todo> deleteById(Long id) throws IOException {
         List<Todo> todosAll = readJson();
-
-        if (request.getCompleted() != null) {
-            founded.setCompleted(request.getCompleted());
+        List<Todo> result = new ArrayList<>();
+        for (Todo todo : todosAll) {
+            if (todo.getId() != id) {
+                result.add(todo);
+            }
         }
-        if (request.getTitle() != null) {
-            founded.setTitle(request.getTitle());
-            int index = -1;
-            for (int i = 0; i < todosAll.size(); i++) {
-                if (todosAll.get(i).getId() == founded.getId()) {
-                    index = i;
-                    break;
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            File file = new File("C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json");
+            FileWriter writer = new FileWriter(file);
+            mapper.writeValue(writer, result);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return result;
+    }
+
+    public Todo update(long id, TodoUpdateRequest request) {
+        List<Todo> todosAll = readJson();
+        for (Todo todo : todosAll) {
+            if (todo.getId() == id) {
+                if (request.getCompleted() != null || request.getTitle() != null ) {
+                    todo.setCompleted(request.getCompleted());
+                    todo.setTitle(request.getTitle());
                 }
+                int index = -1;
+                for (int i = 0; i < todosAll.size(); i++) {
+                    if (todo.getId() == todo.getId()) {
+                        index = i;
+                        break;
+                    }
+                }
+                if (index != -1) {
+                    todosAll.set(index, todo);
+                }
+
+                ObjectMapper mapper2 = new ObjectMapper();
+                try {
+                    File file = new File("C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json");
+                    FileWriter writer = new FileWriter(file);
+                    mapper2.writeValue(writer, todosAll);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+                return todo;
             }
 
-            if (index != -1) {
-                todosAll.set(index, founded);
-            }
-
-            ObjectMapper mapper2 = new ObjectMapper();
-            try {
-                File file = new File("C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json");
-                FileWriter writer = new FileWriter(file);
-                mapper2.writeValue(writer, todosAll);
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
 
         }
-        return founded;
 
+        return null;
     }
 }
+
 
