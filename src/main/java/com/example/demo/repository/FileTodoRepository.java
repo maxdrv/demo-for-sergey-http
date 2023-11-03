@@ -25,6 +25,7 @@ public class FileTodoRepository {
     public FileTodoRepository() {
         this.list = new ArrayList<>();
     }
+
     public static List<Todo> readJson() {
         ObjectMapper mapper = new ObjectMapper();
         String filePath = "C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json";
@@ -98,6 +99,7 @@ public class FileTodoRepository {
         }
         throw new RuntimeException("todo not found by id " + id);
     }
+
     public SubTask findByTodoIdAndTaskIdOrThrow(long todoId, long subtaskId) {
         Todo todo = findByIdOrThrow(todoId);
 
@@ -115,16 +117,37 @@ public class FileTodoRepository {
 
     public Todo update(long id, TodoUpdateRequest request) {
         Todo founded = findByIdOrThrow(id);
+        List<Todo> todosAll = readJson();
 
         if (request.getCompleted() != null) {
             founded.setCompleted(request.getCompleted());
         }
         if (request.getTitle() != null) {
             founded.setTitle(request.getTitle());
+            int index = -1;
+            for (int i = 0; i < todosAll.size(); i++) {
+                if (todosAll.get(i).getId() == founded.getId()) {
+                    index = i;
+                    break;
+                }
+            }
+
+            if (index != -1) {
+                todosAll.set(index, founded);
+            }
+
+            ObjectMapper mapper2 = new ObjectMapper();
+            try {
+                File file = new File("C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json");
+                FileWriter writer = new FileWriter(file);
+                mapper2.writeValue(writer, todosAll);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+
         }
         return founded;
+
     }
 }
-
-
 
