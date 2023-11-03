@@ -120,21 +120,12 @@ public class FileTodoRepository {
         List<Todo> todosAll = readJson();
         for (Todo todo : todosAll) {
             if (todo.getId() == id) {
-                if (request.getCompleted() != null || request.getTitle() != null ) {
+                if (request.getCompleted() != null) {
                     todo.setCompleted(request.getCompleted());
+                }
+                if (request.getTitle() != null) {
                     todo.setTitle(request.getTitle());
                 }
-                int index = -1;
-                for (int i = 0; i < todosAll.size(); i++) {
-                    if (todo.getId() == todo.getId()) {
-                        index = i;
-                        break;
-                    }
-                }
-                if (index != -1) {
-                    todosAll.set(index, todo);
-                }
-
                 ObjectMapper mapper2 = new ObjectMapper();
                 try {
                     File file = new File("C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json");
@@ -145,10 +136,7 @@ public class FileTodoRepository {
                 }
                 return todo;
             }
-
-
         }
-
         return null;
     }
 }
