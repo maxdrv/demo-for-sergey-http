@@ -11,20 +11,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+
 
 import static com.example.demo.repository.NextTodoId.nextTodoId;
 
 @Component
 public class FileTodoRepository {
-
-    private long todoSeq = 1L;
-    private long subtaskSeq = 1L;
-    private List<Todo> list;
-
-    public FileTodoRepository() {
-        this.list = new ArrayList<>();
-    }
 
     public static List<Todo> readJson() {
         ObjectMapper mapper = new ObjectMapper();
@@ -94,26 +86,6 @@ public class FileTodoRepository {
             }
         }
         throw new RuntimeException("subtask not found by subtask id " + subtaskId);
-    }
-
-    public List<Todo> deleteById(Long id) throws IOException {
-        List<Todo> todosAll = readJson();
-        List<Todo> result = new ArrayList<>();
-        for (Todo todo : todosAll) {
-            if (todo.getId() != id) {
-                result.add(todo);
-            }
-        }
-
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            File file = new File("C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json");
-            FileWriter writer = new FileWriter(file);
-            mapper.writeValue(writer, result);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return result;
     }
 
     public Todo update(long id, TodoUpdateRequest request) {
