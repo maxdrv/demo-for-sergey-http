@@ -25,6 +25,7 @@ public class FileTodoRepository {
     public FileTodoRepository() {
         this.list = new ArrayList<>();
     }
+
     public static List<Todo> readJson() {
         ObjectMapper mapper = new ObjectMapper();
         String filePath = "C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json";
@@ -68,6 +69,33 @@ public class FileTodoRepository {
         return todo;
     }
 
+
+    public Todo findByIdOrThrow(long id) {
+        readJson();
+
+        for (Todo todo : readJson()) {
+            if (todo.getId() == id) {
+                return todo;
+            }
+        }
+        throw new RuntimeException("todo not found by id " + id);
+    }
+
+    public SubTask findByTodoIdAndTaskIdOrThrow(long todoId, long subtaskId) {
+        Todo todo = findByIdOrThrow(todoId);
+
+        if (todo.getSubtasks() == null) {
+            throw new RuntimeException("subtask not found by subtask id " + subtaskId);
+        }
+
+        for (SubTask subTask : todo.getSubtasks()) {
+            if (subTask.getId() == subtaskId) {
+                return subTask;
+            }
+        }
+        throw new RuntimeException("subtask not found by subtask id " + subtaskId);
+    }
+
     public List<Todo> deleteById(Long id) throws IOException {
         List<Todo> todosAll = readJson();
         List<Todo> result = new ArrayList<>();
@@ -88,43 +116,29 @@ public class FileTodoRepository {
         return result;
     }
 
-    public Todo findByIdOrThrow(long id) {
-        readJson();
-
-        for (Todo todo : readJson()) {
+    public Todo update(long id, TodoUpdateRequest request) {
+        List<Todo> todosAll = readJson();
+        for (Todo todo : todosAll) {
             if (todo.getId() == id) {
+                if (request.getCompleted() != null) {
+                    todo.setCompleted(request.getCompleted());
+                }
+                if (request.getTitle() != null) {
+                    todo.setTitle(request.getTitle());
+                }
+                ObjectMapper mapper2 = new ObjectMapper();
+                try {
+                    File file = new File("C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json");
+                    FileWriter writer = new FileWriter(file);
+                    mapper2.writeValue(writer, todosAll);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
                 return todo;
             }
         }
-        throw new RuntimeException("todo not found by id " + id);
-    }
-    public SubTask findByTodoIdAndTaskIdOrThrow(long todoId, long subtaskId) {
-        Todo todo = findByIdOrThrow(todoId);
-
-        if (todo.getSubtasks() == null) {
-            throw new RuntimeException("subtask not found by subtask id " + subtaskId);
-        }
-
-        for (SubTask subTask : todo.getSubtasks()) {
-            if (subTask.getId() == subtaskId) {
-                return subTask;
-            }
-        }
-        throw new RuntimeException("subtask not found by subtask id " + subtaskId);
-    }
-
-    public Todo update(long id, TodoUpdateRequest request) {
-        Todo founded = findByIdOrThrow(id);
-
-        if (request.getCompleted() != null) {
-            founded.setCompleted(request.getCompleted());
-        }
-        if (request.getTitle() != null) {
-            founded.setTitle(request.getTitle());
-        }
-        return founded;
+        return null;
     }
 }
-
 
 
