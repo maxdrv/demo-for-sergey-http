@@ -2,7 +2,6 @@ package com.example.demo.repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -11,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+
 
 
 import static com.example.demo.repository.NextTodoId.nextTodoId;
@@ -59,6 +59,17 @@ public class FileTodoRepository {
             System.out.println(e.getMessage());
         }
         return todo;
+    }
+
+    public List<Todo> deleteById(Long id) throws IOException {
+        List<Todo> todosAll = readJson();
+        List<Todo> result = new ArrayList<>();
+        for (int i = 0; i < todosAll.size(); i++) {
+            if (todosAll.get(i).getId() != id) {
+                result.add(todosAll.get(i));
+            }
+        }
+        return todosAll;
     }
 
 
