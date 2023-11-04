@@ -69,7 +69,16 @@ public class FileTodoRepository {
                 result.add(todosAll.get(i));
             }
         }
-        return todosAll;
+        ObjectMapper mapper2 = new ObjectMapper();
+        try {
+            File file = new File("C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json");
+            FileWriter writer = new FileWriter(file);
+            mapper2.writeValue(writer, result);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return result;
     }
 
 
