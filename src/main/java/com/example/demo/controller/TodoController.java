@@ -26,7 +26,8 @@ public class TodoController {
             @RequestParam(value = "completed", required = false)
             Boolean completed
     ) {
-        List<Todo> todos = FilterTodos.filterTodos(completed, title);
+//        List<Todo> todos = FilterTodos.filterTodos(completed, title);
+        List<Todo> todos = todoRepository.findAll();
         return ResponseEntity.ok(todos);
     }
 
