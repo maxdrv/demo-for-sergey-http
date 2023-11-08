@@ -4,6 +4,9 @@ import com.example.demo.util.FileUtil;
 import com.example.demo.util.JsonUtil;
 import io.micrometer.common.lang.Nullable;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,34 +22,44 @@ public class FileTodoRepository {
     }
 
     public List<Todo> findAll(@Nullable Boolean completed, @Nullable String title) {
-            List<Todo> jsonAll = readFromFile();
-            List<Todo> result = new ArrayList<>();
-            for (Todo todo : jsonAll) {
-                if (title != null && completed != null) {
-                    String todoLowerCase = todo.getTitle().toLowerCase();
-                    String filterLowerCase = title.toLowerCase();
-                    if (todoLowerCase.contains(filterLowerCase) && todo.isCompleted() == completed) {
-                        result.add(todo);
-                    }
-                } else if (title != null) {
-                    String todoLowercase = todo.getTitle().toLowerCase();
-                    String filterLowercase = title.toLowerCase();
-                    if (todoLowercase.contains(filterLowercase)) {
-                        result.add(todo);
-                    }
-                } else if (completed != null) {
-                    if (todo.isCompleted() == completed) {
-                        result.add(todo);
-                    }
-                } else {
+        List<Todo> jsonAll = readFromFile();
+        List<Todo> result = new ArrayList<>();
+        for (Todo todo : jsonAll) {
+            if (title != null && completed != null) {
+                String todoLowerCase = todo.getTitle().toLowerCase();
+                String filterLowerCase = title.toLowerCase();
+                if (todoLowerCase.contains(filterLowerCase) && todo.isCompleted() == completed) {
                     result.add(todo);
                 }
+            } else if (title != null) {
+                String todoLowercase = todo.getTitle().toLowerCase();
+                String filterLowercase = title.toLowerCase();
+                if (todoLowercase.contains(filterLowercase)) {
+                    result.add(todo);
+                }
+            } else if (completed != null) {
+                if (todo.isCompleted() == completed) {
+                    result.add(todo);
+                }
+            } else {
+                result.add(todo);
             }
-            return result;
+        }
+
+        return result;
     }
 
-
     public Todo save(TodoCreateRequest request) {
+        File file = new File("C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Id.txt");
+        if (!file.exists()) {
+            long number = 0;
+            try (FileWriter writer = new FileWriter(file)) {
+                writer.write(Integer.toString((int) number));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         Todo todo = new Todo();
         List<Todo> todos = readFromFile();
         todo.setUserId(1L);
@@ -54,7 +67,6 @@ public class FileTodoRepository {
         todo.setTitle(request.getTitle());
         todo.setCompleted(false);
         todos.add(todo);
-
         String json = JsonUtil.writeValueAsString(todos);
         FileUtil.write(todoFile, json);
 
@@ -72,7 +84,6 @@ public class FileTodoRepository {
         String json = JsonUtil.writeValueAsString(result);
         FileUtil.write(todoFile, json);
 
-
         return result;
     }
 
@@ -81,6 +92,7 @@ public class FileTodoRepository {
 
         for (Todo todo : readFromFile()) {
             if (todo.getId() == id) {
+
                 return todo;
             }
         }
@@ -96,6 +108,7 @@ public class FileTodoRepository {
 
         for (SubTask subTask : todo.getSubtasks()) {
             if (subTask.getId() == subtaskId) {
+
                 return subTask;
             }
         }
@@ -114,6 +127,7 @@ public class FileTodoRepository {
                 }
                 String json = JsonUtil.writeValueAsString(todosAll);
                 FileUtil.write(todoFile, json);
+
                 return todo;
             }
 
@@ -128,6 +142,7 @@ public class FileTodoRepository {
 
     private List<Todo> readFromFile() {
         String json = FileUtil.read(todoFile);
+
         return JsonUtil.readTodoList(json);
     }
 
