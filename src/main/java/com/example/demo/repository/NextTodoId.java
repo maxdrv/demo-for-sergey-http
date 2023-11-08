@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class NextTodoId {
     public static long nextTodoId() {
-        File file = new File("C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Id.txt");
+        File file = new File("Id.txt");
         long number = readNumberFromFile(file);
         number++;
         writeNumberToFile(file, (int) number);

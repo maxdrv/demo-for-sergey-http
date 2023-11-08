@@ -50,7 +50,7 @@ public class FileTodoRepository {
     }
 
     public Todo save(TodoCreateRequest request) {
-        File file = new File("C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Id.txt");
+        File file = new File("Id.txt");
         if (!file.exists()) {
             long number = 0;
             try (FileWriter writer = new FileWriter(file)) {
