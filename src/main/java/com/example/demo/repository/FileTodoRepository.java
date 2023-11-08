@@ -48,14 +48,9 @@ public class FileTodoRepository {
                 result.add(todosAll.get(i));
             }
         }
-        ObjectMapper mapper2 = new ObjectMapper();
-        try {
-            File file = new File("C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json");
-            FileWriter writer = new FileWriter(file);
-            mapper2.writeValue(writer, result);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+        String json = JsonUtil.writeValueAsString(result);
+        FileUtil.write(todoFile, json);
+
 
         return result;
     }
@@ -87,6 +82,7 @@ public class FileTodoRepository {
         throw new RuntimeException("subtask not found by subtask id " + subtaskId);
     }
 
+
     public Todo update(long id, TodoUpdateRequest request) {
         List<Todo> todosAll = readFromFile();
         for (Todo todo : todosAll) {
@@ -97,17 +93,13 @@ public class FileTodoRepository {
                 if (request.getTitle() != null) {
                     todo.setTitle(request.getTitle());
                 }
-                ObjectMapper mapper2 = new ObjectMapper();
-                try {
-                    File file = new File("C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json");
-                    FileWriter writer = new FileWriter(file);
-                    mapper2.writeValue(writer, todosAll);
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
+                String json = JsonUtil.writeValueAsString(todosAll);
+                FileUtil.write(todoFile, json);
                 return todo;
             }
+
         }
+
         return null;
     }
 
