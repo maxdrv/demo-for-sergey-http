@@ -38,9 +38,9 @@ public class FileTodoRepository {
     public List<Todo> deleteById(Long id) {
         List<Todo> todosAll = readFromFile();
         List<Todo> result = new ArrayList<>();
-        for (int i = 0; i < todosAll.size(); i++) {
-            if (todosAll.get(i).getId() != id) {
-                result.add(todosAll.get(i));
+        for (Todo todo : todosAll) {
+            if (todo.getId() != id) {
+                result.add(todo);
             }
         }
         String json = JsonUtil.writeValueAsString(result);
