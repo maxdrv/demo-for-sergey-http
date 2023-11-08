@@ -27,7 +27,7 @@ public class TodoController {
             Boolean completed
     ) {
 //        List<Todo> todos = FilterTodos.filterTodos(completed, title);
-        List<Todo> todos = todoRepository.findAll();
+        List<Todo> todos = todoRepository.findAll(completed, title);
         return ResponseEntity.ok(todos);
     }
 
@@ -57,7 +57,7 @@ public class TodoController {
             @PathVariable("id") long id,
             @RequestBody TodoUpdateRequest request
     ) {
-        Todo updated = todoRepository.update(id, request);
+        Todo updated = (Todo) todoRepository.update(id, request);
         return ResponseEntity.ok(updated);
     }
 

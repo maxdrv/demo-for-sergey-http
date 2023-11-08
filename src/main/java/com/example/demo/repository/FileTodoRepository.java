@@ -2,6 +2,8 @@ package com.example.demo.repository;
 
 import com.example.demo.util.FileUtil;
 import com.example.demo.util.JsonUtil;
+import io.micrometer.common.lang.Nullable;
+
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +18,33 @@ public class FileTodoRepository {
         this.todoFile = todoFile;
     }
 
-    public List<Todo> findAll() {
-        return readFromFile();
+    public List<Todo> findAll(@Nullable Boolean completed, @Nullable String title) {
+            List<Todo> jsonAll = readFromFile();
+            List<Todo> result = new ArrayList<>();
+            for (Todo todo : jsonAll) {
+                if (title != null && completed != null) {
+                    String todoLowerCase = todo.getTitle().toLowerCase();
+                    String filterLowerCase = title.toLowerCase();
+                    if (todoLowerCase.contains(filterLowerCase) && todo.isCompleted() == completed) {
+                        result.add(todo);
+                    }
+                } else if (title != null) {
+                    String todoLowercase = todo.getTitle().toLowerCase();
+                    String filterLowercase = title.toLowerCase();
+                    if (todoLowercase.contains(filterLowercase)) {
+                        result.add(todo);
+                    }
+                } else if (completed != null) {
+                    if (todo.isCompleted() == completed) {
+                        result.add(todo);
+                    }
+                } else {
+                    result.add(todo);
+                }
+            }
+            return result;
     }
+
 
     public Todo save(TodoCreateRequest request) {
         Todo todo = new Todo();
@@ -50,7 +76,6 @@ public class FileTodoRepository {
         return result;
     }
 
-
     public Todo findByIdOrThrow(long id) {
         readFromFile();
 
@@ -76,7 +101,6 @@ public class FileTodoRepository {
         }
         throw new RuntimeException("subtask not found by subtask id " + subtaskId);
     }
-
 
     public Todo update(long id, TodoUpdateRequest request) {
         List<Todo> todosAll = readFromFile();
