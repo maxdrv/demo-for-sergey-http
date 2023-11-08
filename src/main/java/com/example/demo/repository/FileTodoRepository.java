@@ -2,7 +2,7 @@ package com.example.demo.repository;
 
 import com.example.demo.util.FileUtil;
 import com.example.demo.util.JsonUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micrometer.common.lang.Nullable;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -21,11 +21,45 @@ public class FileTodoRepository {
         this.todoFile = todoFile;
     }
 
-    public List<Todo> findAll() {
-        return readFromFile();
+    public List<Todo> findAll(@Nullable Boolean completed, @Nullable String title) {
+        List<Todo> jsonAll = readFromFile();
+        List<Todo> result = new ArrayList<>();
+        for (Todo todo : jsonAll) {
+            if (title != null && completed != null) {
+                String todoLowerCase = todo.getTitle().toLowerCase();
+                String filterLowerCase = title.toLowerCase();
+                if (todoLowerCase.contains(filterLowerCase) && todo.isCompleted() == completed) {
+                    result.add(todo);
+                }
+            } else if (title != null) {
+                String todoLowercase = todo.getTitle().toLowerCase();
+                String filterLowercase = title.toLowerCase();
+                if (todoLowercase.contains(filterLowercase)) {
+                    result.add(todo);
+                }
+            } else if (completed != null) {
+                if (todo.isCompleted() == completed) {
+                    result.add(todo);
+                }
+            } else {
+                result.add(todo);
+            }
+        }
+
+        return result;
     }
 
     public Todo save(TodoCreateRequest request) {
+        File file = new File("Id.txt");
+        if (!file.exists()) {
+            long number = 0;
+            try (FileWriter writer = new FileWriter(file)) {
+                writer.write(Integer.toString((int) number));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         Todo todo = new Todo();
         List<Todo> todos = readFromFile();
         todo.setUserId(1L);
@@ -33,30 +67,32 @@ public class FileTodoRepository {
         todo.setTitle(request.getTitle());
         todo.setCompleted(false);
         todos.add(todo);
-
         String json = JsonUtil.writeValueAsString(todos);
         FileUtil.write(todoFile, json);
 
         return todo;
     }
 
-    public List<Todo> deleteById(Long id) throws IOException {
+    public List<Todo> deleteById(Long id) {
         List<Todo> todosAll = readFromFile();
         List<Todo> result = new ArrayList<>();
-        for (int i = 0; i < todosAll.size(); i++) {
-            if (todosAll.get(i).getId() != id) {
-                result.add(todosAll.get(i));
+        for (Todo todo : todosAll) {
+            if (todo.getId() != id) {
+                result.add(todo);
             }
         }
-        return todosAll;
-    }
+        String json = JsonUtil.writeValueAsString(result);
+        FileUtil.write(todoFile, json);
 
+        return result;
+    }
 
     public Todo findByIdOrThrow(long id) {
         readFromFile();
 
         for (Todo todo : readFromFile()) {
             if (todo.getId() == id) {
+
                 return todo;
             }
         }
@@ -72,6 +108,7 @@ public class FileTodoRepository {
 
         for (SubTask subTask : todo.getSubtasks()) {
             if (subTask.getId() == subtaskId) {
+
                 return subTask;
             }
         }
@@ -88,17 +125,14 @@ public class FileTodoRepository {
                 if (request.getTitle() != null) {
                     todo.setTitle(request.getTitle());
                 }
-                ObjectMapper mapper2 = new ObjectMapper();
-                try {
-                    File file = new File("C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json");
-                    FileWriter writer = new FileWriter(file);
-                    mapper2.writeValue(writer, todosAll);
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
+                String json = JsonUtil.writeValueAsString(todosAll);
+                FileUtil.write(todoFile, json);
+
                 return todo;
             }
+
         }
+
         return null;
     }
 
@@ -108,6 +142,7 @@ public class FileTodoRepository {
 
     private List<Todo> readFromFile() {
         String json = FileUtil.read(todoFile);
+
         return JsonUtil.readTodoList(json);
     }
 
