@@ -2,11 +2,6 @@ package com.example.demo.repository;
 
 import com.example.demo.util.FileUtil;
 import com.example.demo.util.JsonUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +35,7 @@ public class FileTodoRepository {
         return todo;
     }
 
-    public List<Todo> deleteById(Long id) throws IOException {
+    public List<Todo> deleteById(Long id) {
         List<Todo> todosAll = readFromFile();
         List<Todo> result = new ArrayList<>();
         for (int i = 0; i < todosAll.size(); i++) {
