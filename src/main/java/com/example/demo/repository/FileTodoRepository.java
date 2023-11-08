@@ -1,68 +1,47 @@
 package com.example.demo.repository;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.example.demo.util.FileUtil;
+import com.example.demo.util.JsonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 import static com.example.demo.repository.NextTodoId.nextTodoId;
 
-@Component
 public class FileTodoRepository {
 
-    public static List<Todo> readJson() {
-        ObjectMapper mapper = new ObjectMapper();
-        String filePath = "C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json";
-        try {
-            List<Todo> todos = new ArrayList<>();
-            File file = new File(filePath);
-            if (file.exists()) {
-                String result = Files.readString(file.toPath());
-                if (result.isBlank()) {
-                    return todos;
-                }
-                return mapper.readValue(new File(filePath), new TypeReference<>() {
-                });
+    private final Path todoFile;
 
-            } else {
-                return todos;
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
+    public FileTodoRepository(Path todoFile) {
+        this.todoFile = todoFile;
     }
 
-    public Todo save(TodoCreateRequest request) throws IOException {
+    public List<Todo> findAll() {
+        return readFromFile();
+    }
+
+    public Todo save(TodoCreateRequest request) {
         Todo todo = new Todo();
-        List<Todo> todos = readJson();
+        List<Todo> todos = readFromFile();
         todo.setUserId(1L);
         todo.setId(nextTodoId());
         todo.setTitle(request.getTitle());
         todo.setCompleted(false);
         todos.add(todo);
-        ObjectMapper mapper2 = new ObjectMapper();
-        try {
-            File file = new File("C:\\Users\\User\\Desktop\\demo-for-sergey-http\\Todo.json");
-            FileWriter writer = new FileWriter(file);
-            mapper2.writeValue(writer, todos);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+
+        String json = JsonUtil.writeValueAsString(todos);
+        FileUtil.write(todoFile, json);
+
         return todo;
     }
 
     public List<Todo> deleteById(Long id) throws IOException {
-        List<Todo> todosAll = readJson();
+        List<Todo> todosAll = readFromFile();
         List<Todo> result = new ArrayList<>();
         for (int i = 0; i < todosAll.size(); i++) {
             if (todosAll.get(i).getId() != id) {
@@ -83,9 +62,9 @@ public class FileTodoRepository {
 
 
     public Todo findByIdOrThrow(long id) {
-        readJson();
+        readFromFile();
 
-        for (Todo todo : readJson()) {
+        for (Todo todo : readFromFile()) {
             if (todo.getId() == id) {
                 return todo;
             }
@@ -109,7 +88,7 @@ public class FileTodoRepository {
     }
 
     public Todo update(long id, TodoUpdateRequest request) {
-        List<Todo> todosAll = readJson();
+        List<Todo> todosAll = readFromFile();
         for (Todo todo : todosAll) {
             if (todo.getId() == id) {
                 if (request.getCompleted() != null) {
@@ -131,6 +110,16 @@ public class FileTodoRepository {
         }
         return null;
     }
+
+    public void deleteAll() {
+        FileUtil.write(todoFile, "[]");
+    }
+
+    private List<Todo> readFromFile() {
+        String json = FileUtil.read(todoFile);
+        return JsonUtil.readTodoList(json);
+    }
+
 }
 
 
