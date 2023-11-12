@@ -53,21 +53,10 @@ public class FileTodoRepository {
     }
 
     public Todo save(TodoCreateRequest request) {
-        File file = new File("Id.txt");
-        if (!file.exists()) {
-            long number = 0;
-            try (FileWriter writer = new FileWriter(file)) {
-                writer.write(Integer.toString((int) number));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
         Todo todo = new Todo();
         List<Todo> todos = readFromFile();
         todo.setUserId(1L);
-        SequenceOnDiskParametrized nextTodoId = new SequenceOnDiskParametrized("id.txt");
-        todo.setId(nextTodoId.next());
+        todo.setId(sequence.next());
         todo.setTitle(request.getTitle());
         todo.setCompleted(false);
         todos.add(todo);
