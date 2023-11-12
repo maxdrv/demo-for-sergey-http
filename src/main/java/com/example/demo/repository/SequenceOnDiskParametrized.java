@@ -14,7 +14,7 @@ public class SequenceOnDiskParametrized {
 
     public int next() {
         File file = new File(path);
-        int next = 0;
+        int next = 1;
         if(file.exists()){
             try {
                 String content = Files.readString(file.toPath());
@@ -43,4 +43,5 @@ public class SequenceOnDiskParametrized {
         }
         return next;
     }
+
 }

@@ -46,6 +46,7 @@ class DemoApplicationTests {
 				.andExpect(jsonPath("$.[0].userId").value(1))
 				.andExpect(jsonPath("$.[0].title").value("something test"))
 				.andExpect(jsonPath("$.[0].completed").value(false))
+				.andExpect(jsonPath("$.[0].id").value(1))
 				.andExpect(jsonPath("$.length()").value(1));
 	}
 
