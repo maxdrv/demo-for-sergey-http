@@ -139,6 +139,9 @@ public class FileTodoRepository {
 
         return JsonUtil.readTodoList(json);
     }
+    public void  IdDelete(){
+        sequence.idReset();
+    }
 
 }
 

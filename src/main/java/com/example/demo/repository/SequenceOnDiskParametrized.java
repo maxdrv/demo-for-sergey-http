@@ -1,5 +1,7 @@
 package com.example.demo.repository;
 
+import com.example.demo.util.FileUtil;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -42,6 +44,20 @@ public class SequenceOnDiskParametrized {
             throw new RuntimeException(e);
         }
         return next;
+
+    } public int idReset(){
+        File file = new File(path);
+        int next = 0;
+        try {
+            FileWriter writer = new FileWriter(file);
+            writer.write(Integer.toString(next));
+            writer.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return next;
+
     }
+
 
 }

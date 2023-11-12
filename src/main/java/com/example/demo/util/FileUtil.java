@@ -30,5 +30,13 @@ public class FileUtil {
             throw new RuntimeException(e);
         }
     }
+    public static void writeId(String path, String content) {
+        try {
+            Path path1 = Path.of(path);
+            Files.write(path1, content.getBytes());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }

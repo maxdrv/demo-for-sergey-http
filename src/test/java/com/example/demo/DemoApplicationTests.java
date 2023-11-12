@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import com.example.demo.repository.FileTodoRepository;
+import com.example.demo.repository.SequenceOnDiskParametrized;
 import com.example.demo.repository.TodoCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,13 +25,18 @@ class DemoApplicationTests {
 	@Autowired
 	public FileTodoRepository todoRepository;
 
+
 	@Autowired
 	MockMvc mockMvc;
-
+	@BeforeEach
+	void init1() throws IOException {
+		todoRepository.IdDelete();
+	}
 	@BeforeEach
 	void init() throws IOException {
 		todoRepository.deleteAll();
 	}
+
 
 	@Test
 	void getTodos() throws Exception {
