@@ -11,14 +11,17 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.demo.repository.NextTodoId.nextTodoId;
+
 
 public class FileTodoRepository {
 
     private final Path todoFile;
 
-    public FileTodoRepository(Path todoFile) {
+    private final SequenceOnDiskParametrized sequence;
+
+    public FileTodoRepository(Path todoFile, SequenceOnDiskParametrized sequence) {
         this.todoFile = todoFile;
+        this.sequence = sequence;
     }
 
     public List<Todo> findAll(@Nullable Boolean completed, @Nullable String title) {
@@ -63,7 +66,8 @@ public class FileTodoRepository {
         Todo todo = new Todo();
         List<Todo> todos = readFromFile();
         todo.setUserId(1L);
-        todo.setId(nextTodoId());
+        SequenceOnDiskParametrized nextTodoId = new SequenceOnDiskParametrized("id.txt");
+        todo.setId(nextTodoId.next());
         todo.setTitle(request.getTitle());
         todo.setCompleted(false);
         todos.add(todo);
@@ -135,6 +139,7 @@ public class FileTodoRepository {
 
         return null;
     }
+
 
     public void deleteAll() {
         FileUtil.write(todoFile, "[]");
