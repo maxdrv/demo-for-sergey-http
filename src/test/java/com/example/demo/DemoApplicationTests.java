@@ -27,12 +27,10 @@ class DemoApplicationTests {
 
 	@Autowired
 	MockMvc mockMvc;
-	@BeforeEach
-	void init1() throws IOException {
-		todoRepository.idReset();
-	}
+
 	@BeforeEach
 	void init() throws IOException {
+		todoRepository.idReset();
 		todoRepository.deleteAll();
 	}
 
