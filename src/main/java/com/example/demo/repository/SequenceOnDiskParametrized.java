@@ -6,16 +6,21 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class SequenceOnDiskParametrized {
-    private final String path;
+    private final Path path;
 
-    public SequenceOnDiskParametrized(String filePath) {
-        this.path = filePath;
+    public Path getPath() {
+        return path;
+    }
+
+    public SequenceOnDiskParametrized(Path path) {
+        this.path = path;
     }
 
     public int next() {
-        File file = new File(path);
+        File file = new File(path.toUri());
         int next = 1;
         if(file.exists()){
             try {
@@ -45,19 +50,5 @@ public class SequenceOnDiskParametrized {
         }
         return next;
 
-    } public int idReset(){
-        File file = new File(path);
-        int next = 0;
-        try {
-            FileWriter writer = new FileWriter(file);
-            writer.write(Integer.toString(next));
-            writer.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return next;
-
     }
-
-
 }
