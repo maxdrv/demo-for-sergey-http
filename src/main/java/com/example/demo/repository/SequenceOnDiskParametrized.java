@@ -40,7 +40,7 @@ public class SequenceOnDiskParametrized {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        }
+        }//kvfgdg
         try {
             FileWriter writer = new FileWriter(file);
             writer.write(Integer.toString(next));
