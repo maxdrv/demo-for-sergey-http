@@ -4,9 +4,6 @@ import com.example.demo.util.FileUtil;
 import com.example.demo.util.JsonUtil;
 import io.micrometer.common.lang.Nullable;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -138,6 +135,12 @@ public class FileTodoRepository {
         String json = FileUtil.read(todoFile);
 
         return JsonUtil.readTodoList(json);
+    }
+
+    public void idReset(){
+        String path = String.valueOf(sequence.getPath());
+       FileUtil.write(Path.of(path),"0");
+
     }
 
 }

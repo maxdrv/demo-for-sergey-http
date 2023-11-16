@@ -23,7 +23,7 @@ public class ApplicationConfig {
         String todoFilePath = userDir + todoRelativePath;
         Path p = Path.of(todoFilePath);
         String idFile = userDir + todoIdRelativePath;
-        SequenceOnDiskParametrized sequence = new SequenceOnDiskParametrized(idFile);
+        SequenceOnDiskParametrized sequence = new SequenceOnDiskParametrized(Path.of(idFile));
         return new FileTodoRepository(p, sequence);
     }
 

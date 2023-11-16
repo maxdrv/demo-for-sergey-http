@@ -24,13 +24,16 @@ class DemoApplicationTests {
 	@Autowired
 	public FileTodoRepository todoRepository;
 
+
 	@Autowired
 	MockMvc mockMvc;
 
 	@BeforeEach
 	void init() throws IOException {
+		todoRepository.idReset();
 		todoRepository.deleteAll();
 	}
+
 
 	@Test
 	void getTodos() throws Exception {
