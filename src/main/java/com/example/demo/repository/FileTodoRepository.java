@@ -138,8 +138,7 @@ public class FileTodoRepository {
     }
 
     public void idReset(){
-        String path = String.valueOf(sequence.getPath());
-       FileUtil.write(Path.of(path),"0");
+       FileUtil.write(sequence.getPath(),"0");
 
     }
 
